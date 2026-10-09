@@ -65,6 +65,10 @@ def read_excel(path):
             fields = {heads[i]: value(c) for i, c in enumerate(row) if heads[i]}
             links = {heads[i]: c.hyperlink.target for i, c in enumerate(row)
                      if c.hyperlink and c.hyperlink.target}
+            for label in ("投递入口", "原文链接"):
+                text = str(fields.get(label) or "").strip()
+                if label not in links and re.match(r"^https?://[^\s]+$", text, re.I):
+                    links[label] = text
             rid = str(fields.get("记录ID") or "")
             if not rid:
                 rid = "source-" + hashlib.sha256((ws.title + json.dumps(fields, ensure_ascii=False, sort_keys=True)).encode()).hexdigest()[:20]
@@ -96,6 +100,7 @@ def read_excel(path):
                 "stage": "已投递", "appliedDate": str(f.get("我的投递日期") or "")[:10],
                 "resume": "", "notes": f.get("个人备注") or "", "createdAt": dt.date.today().isoformat(),
                 "索引": ["[[工作投递管理系统]]"]})
+    wb.close()
     return {"sourcePath": str(p), "sourceHash": hashlib.sha256(content).hexdigest(),
             "readAt": dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(),
             "companies": sorted(companies.values(), key=lambda c: c["name"]), "records": records,

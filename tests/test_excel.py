@@ -12,8 +12,10 @@ class ExcelTests(unittest.TestCase):
     def test_personal_workbook_no_forced_batch(self):
         with tempfile.TemporaryDirectory() as root:
             p=Path(root)/'朋友 表格.xlsx';w=openpyxl.Workbook();s=w.active;s.title='投递信息'
-            s.append(['记录ID','企业','招聘计划/岗位','我的投递状态','我的投递日期']);s.append(['r1','示例企业','工程师','已投递','2026-10-09']);w.save(p)
-            self.assertEqual(reader.read_excel(p)['initialJobs'][0]['batch'],'')
+            s.append(['记录ID','企业','招聘计划/岗位','我的投递状态','我的投递日期','投递入口']);s.append(['r1','示例企业','工程师','已投递','2026-10-09','https://example.org/jobs']);w.save(p)
+            result=reader.read_excel(p)
+            self.assertEqual(result['initialJobs'][0]['batch'],'')
+            self.assertEqual(result['initialJobs'][0]['url'],'https://example.org/jobs')
             (p.parent/('~$'+p.name)).touch()
             with self.assertRaisesRegex(RuntimeError,'正在编辑'):reader.read_excel(p)
 if __name__=='__main__':unittest.main()
