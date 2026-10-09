@@ -29,7 +29,7 @@ def main():
             p=folder/(name+'.command');p.write_text('#!/bin/sh\ncd "$(dirname "$0")" || exit 1\n./runtime/JobManager '+flag+'\nprintf "\\n按回车关闭…"\nread answer\n');p.chmod(0o755)
     metadata={'version':'2.0.0','platform':sys.platform,'architecture':platform.machine(),'nativeDesktopEndToEnd':'not-verified','buildRuntime':'self-contained'}
     (folder/'build-info.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n')
-    archive=folder.with_suffix('.zip')
+    archive=folder.parent / (folder.name + '.zip')
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
         for p in sorted(folder.rglob('*')):
             if p.is_file():z.write(p,p.relative_to(folder.parent))

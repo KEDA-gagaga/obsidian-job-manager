@@ -6,6 +6,9 @@ import tempfile
 import sys
 ROOT=Path(__file__).resolve().parents[1]
 folder=next(p for p in (ROOT/'release').iterdir() if p.is_dir())
+archive=folder.parent / (folder.name + '.zip')
+assert archive.is_file(), 'Archive filename must retain version and platform'
+assert len(list((ROOT/'release').glob('*.zip')))==1
 exe=folder/'runtime'/('JobManager.exe' if sys.platform=='win32' else 'JobManager')
 p=subprocess.run([str(exe),'--help'],capture_output=True,timeout=30);assert p.returncode==0,p.stderr
 p=subprocess.run([str(exe),'--excel',str(folder/'templates/招聘信息模板.xlsx')],capture_output=True,timeout=30);assert p.returncode==0,p.stderr
