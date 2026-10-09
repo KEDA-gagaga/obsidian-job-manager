@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "KEDA 岗位采集",
+  "version": "1.0.0",
+  "description": "预览当前招聘岗位，保存到 Obsidian 工作投递；自动心愿单与去重。",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoYeDJz7mjfi8mBhnDD19nE4PjbBEmfCJV/Eqc5ykuIS3Q92ePydAM7eHV0XYMhndANQerTBwUy9Pz95oHHw3B9AgKVHbeSPkN5USxbLObTKwCmHa1m4oa2JyLqbNCivCTEfUybVmg6GeEVVAzQmY9VOO2XV0WL9ZlPgzpZzZ2m/3Y89EPCDo0Ma7lGiEf6cJAKgNECBo/1vxWioKZKYPf4rym9F3mfFCyzcS9kVrGagjs8jLmv5klVXH4cJq6JCwIfjYz7jXHazdV3iixABRm//MrWIGfS9NYRr+uKqgstkv1Li+VXR44n7JkgDL1eqk1FUdrtylg3pjrz5Ns0bLgwIDAQAB",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "nativeMessaging",
+    "storage"
+  ],
+  "action": {
+    "default_title": "保存岗位到 Obsidian",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

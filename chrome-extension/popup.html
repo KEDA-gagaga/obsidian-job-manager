@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>岗位采集</title><link rel="stylesheet" href="popup.css"></head>
+<body>
+<header><img src="icons/icon48.png" width="32" height="32" alt=""><div><h1>保存这份岗位</h1><p>企业加入心愿单 · 岗位自动去重</p></div><button id="help" class="icon-button" title="使用说明" aria-label="使用说明">?</button></header>
+<main>
+  <div class="connection"><span id="connection-dot" class="dot"></span><span id="connection-text">正在连接 Obsidian…</span><button id="retry" class="text-button" hidden>重试</button></div>
+  <a id="source" target="_blank" rel="noopener noreferrer"></a>
+  <div id="status" role="status" aria-live="polite">正在识别当前页面…</div>
+  <form id="capture-form">
+    <label>企业 <span class="required">*</span><input id="company" list="companies" required maxlength="180" placeholder="输入名称，或选择库里已有企业" autocomplete="off"><datalist id="companies"></datalist></label>
+    <p id="company-hint" class="hint"></p><div id="company-suggestions" class="suggestions"></div><select id="company-match" aria-label="选择准确企业" hidden></select>
+    <label id="restore-row" class="checkbox-row" hidden><input id="restore" type="checkbox">还原已归档企业后保存</label>
+    <label>具体岗位 <span class="required">*</span><input id="name" required maxlength="240" placeholder="例如：产品技术工程师"></label>
+    <div class="two-fields"><label>工作地点<input id="location" maxlength="400" placeholder="未提取，可补充"></label><label>招聘批次<input id="batch" maxlength="160" placeholder="未写明则留空"></label></div>
+    <label>投递 / 岗位链接<input id="url" type="url" required placeholder="https://…"></label>
+    <details><summary>岗位要求与职责 <span id="detail-hint"></span></summary><label>岗位要求<textarea id="requirements" maxlength="12000" rows="4" placeholder="页面明确写出的要求"></textarea></label><label>岗位职责<textarea id="responsibilities" maxlength="12000" rows="3" placeholder="页面明确写出的职责"></textarea></label><label>个人备注<textarea id="notes" maxlength="2000" rows="2" placeholder="可选：选择理由或待确认的问题"></textarea></label></details>
+    <div class="destination"><span>保存至</span><strong>目标库 · 工作投递 / 岗位</strong></div>
+    <button id="save" class="primary" type="submit" disabled>保存到岗位</button>
+    <p class="shortcut">确认后保存 · ⌘ / Ctrl + Enter</p>
+  </form>
+  <section id="receipt" hidden><div class="success-mark">✓</div><h2 id="receipt-title"></h2><p id="receipt-detail"></p><button id="open" class="primary">在 Obsidian 中查看</button><div class="receipt-actions"><button id="undo" class="text-button">撤销这次保存</button><button id="edit-again" class="text-button">返回编辑</button></div></section>
+</main>
+<footer>只读取你点击时的当前页面，保存到本机。</footer>
+<script type="module" src="popup.js"></script>
+</body></html>

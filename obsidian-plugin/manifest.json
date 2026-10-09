@@ -1,0 +1,9 @@
+{
+  "id": "keda-job-applications",
+  "name": "工作投递",
+  "version": "2.0.0",
+  "minAppVersion": "1.8.0",
+  "description": "独立的企业、岗位、投递、简历管理和 Chrome 岗位采集。",
+  "author": "KEDA",
+  "isDesktopOnly": true
+}
