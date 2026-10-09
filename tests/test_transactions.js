@@ -69,5 +69,25 @@ const input = {company: {name: '北方华创'}, name: '半导体工艺工程师'
   const conflicting = JSON.parse(JSON.stringify(p.data)); conflicting.companies.push({id: 'another-naura', name: '其他组织', aliases: ['北方华创']});
   assert.throws(() => B.preview(conflicting, B.normalize(input)), /多条匹配/);
   const unknownIdBefore = bytes(); await assert.rejects(() => p.saveBrowserJob({...input, company: {id: 'does-not-exist', name: '北方华创'}}), /不存在/); assert.equal(bytes(), unknownIdBefore);
+  // Exercise namespaced daily notes and draft files with the actual transaction/undo code.
+  p.app.vault.process = async (f, fn) => write(f.path, fn(fs.readFileSync(path.join(root, f.path), 'utf8')));
+  p.app.vault.delete = async f => fs.unlinkSync(path.join(root, f.path));
+  p.app.vault.adapter.remove = async rel => fs.unlinkSync(path.join(root, rel));
+  const diaryRel = `工作投递/日记/${P.day()}.md`, diaryBefore = bytes();
+  await p.transact('测试就业日记', async (d, tx) => tx.diary('- [ ] 独立就业行动 #AI'));
+  assert(fs.readFileSync(path.join(root, diaryRel), 'utf8').includes('独立就业行动'));
+  await p.undo(); assert.equal(bytes(), diaryBefore); assert(!fs.existsSync(path.join(root, diaryRel)));
+  const resumeRel='工作投递/简历/测试简历.md'; write(resumeRel, '# 已核实简历事实');
+  await p.transact('绑定简历', d => {d.jobs.find(j=>j.id===newCompany.jobId).resume=resumeRel;});
+  const draftBefore=bytes();
+  const draft=await p.saveJobDraft({jobId:newCompany.jobId,resume:resumeRel,body:'# 可直接使用的文案\n\n真实经历文案\n\n# 事实依据与调整\n简历事实'});
+  assert(draft.note.startsWith('工作投递/AI结果/'));assert(fs.existsSync(path.join(root,draft.note)));
+  await p.undo();assert.equal(bytes(),draftBefore);assert(!fs.existsSync(path.join(root,draft.note)));
+  await p.transact('另一个就业行动',async(d,tx)=>tx.diary('- [ ] 不覆盖后续日记'));
+  fs.appendFileSync(path.join(root,diaryRel),'\n用户后续编辑\n');
+  const guardedData=bytes(), guardedDiary=fs.readFileSync(path.join(root,diaryRel),'utf8');
+  const token=require('crypto').createHash('sha256').update(p.settings.undo.at(-1)).digest('hex');
+  await assert.rejects(()=>p.undo(token),/修改|变化|编辑/);
+  assert.equal(bytes(),guardedData);assert.equal(fs.readFileSync(path.join(root,diaryRel),'utf8'),guardedDiary);
   console.log('浏览器岗位事务通过：自动心愿单、重复补缺、历史投递保护、不同批次、归档还原、并发去重与精确撤销。');
 } finally { fs.rmSync(root, {recursive: true, force: true}); } })().catch(e => { console.error(e); process.exitCode = 1; });

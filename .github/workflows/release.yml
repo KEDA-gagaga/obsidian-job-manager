@@ -35,6 +35,7 @@ jobs:
       - run: node tests/test_picker.js
       - run: node tests/test_transactions.js
       - run: node tests/test_extension.mjs
+      - run: node tests/test_templates.js
       - run: python scripts/audit_package.py
       - run: python scripts/build_release.py --label ${{ matrix.label }}
       - run: python scripts/smoke_bundle.py
