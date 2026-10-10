@@ -9,6 +9,19 @@ class ExcelTests(unittest.TestCase):
     def test_template_empty_and_source_unchanged(self):
         p=ROOT/'templates/招聘信息模板.xlsx';before=p.read_bytes();result=reader.read_excel(p)
         self.assertEqual(result['companies'],[]);self.assertEqual(result['initialJobs'],[]);self.assertEqual(before,p.read_bytes())
+    def test_shared_base_has_no_personal_records(self):
+        p=ROOT/'templates/南大就业招聘基础表.xlsx'
+        before=p.read_bytes();result=reader.read_excel(p)
+        self.assertGreater(len(result['records']),0)
+        self.assertEqual(result['initialJobs'],[])
+        self.assertEqual(before,p.read_bytes())
+        private={'我的预约状态','我的投递状态','我的投递日期','个人备注','内推码','来源消息ID','原文依据','备注'}
+        w=openpyxl.load_workbook(p,data_only=True)
+        for sheet in w:
+            heads={str(c.value):c.column for c in sheet[1]}
+            for row in list(sheet)[1:]:
+                for name in private & heads.keys():self.assertIsNone(row[heads[name]-1].value)
+        w.close()
     def test_personal_workbook_no_forced_batch(self):
         with tempfile.TemporaryDirectory() as root:
             p=Path(root)/'朋友 表格.xlsx';w=openpyxl.Workbook();s=w.active;s.title='投递信息'
